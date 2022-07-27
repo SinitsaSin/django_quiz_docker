@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import os
+from os import getenv
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -24,9 +24,9 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG') in ['True', 'TRUE', '1']
-ALLOWED_HOSTS = [el.strip() for el in os.getenv('ALLOWED_HOSTS').split()]
+SECRET_KEY = getenv('SECRET_KEY')
+DEBUG = getenv('DEBUG') in ['True', 'TRUE', '1']
+ALLOWED_HOSTS = [el.strip() for el in getenv('ALLOWED_HOSTS').split()]
 
 # Application definition
 
@@ -79,9 +79,13 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
+        "HOST": getenv("POSTGRES_HOST"),
+        "PORT": getenv("POSTGRES_PORT"),
+        "NAME": getenv("POSTGRES_DB"),
+        "USER": getenv("POSTGRES_USER"),
+        "PASSWORD": getenv("POSTGRES_PASSWORD"),
     }
 }
 

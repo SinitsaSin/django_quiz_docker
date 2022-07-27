@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    image: sinitsasin/web_service
+    container_name: web_service
+    command: gunicorn app.wsgi:application --bind 0.0.0.0:8090
+#    volumes:
+#      - static_volume:/opt/src/static
+#      - media_volume:/opt/src/media
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+
+  db:
+    image: postgres:12.0-alpine
+    container_name: db_service
+    volumes:
+      - db_data_volume:/var/lib/postgresql/data/
+    ports:
+      - "5438:5432"
+    env_file:
+      - .env
+
+  nginx:
+    build: ./nginx
+    image: sinitsasin/nginx_service:latest
+    container_name: nginx_service
+    volumes:
+      - static_volume:/opt/src/static
+      - media_volume:/opt/src/media
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data_volume:
+    name: db_data
+  static_volume:
+    name: static_data
+  media_volume:
+    name: media_data
