@@ -33,11 +33,30 @@ services:
     container_name: nginx_service
     volumes:
       - static_volume:/opt/src/static
-      - media_volume:/opt/src/media
+      - media_volume:/opt/src/media/
     ports:
       - "80:80"
     depends_on:
       - db
+
+  broker:
+    image: rabbitmq:3.9.12-alpine
+    container_name: broker_service
+    volumes:
+      - rabbit_volume:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+    env_file:
+      - .env
+
+
+  backend:
+    image: redis:6.2.6-alpine
+    container_name: backend_service
+    volumes:
+      - redis_volume:/data
+    ports:
+      - "6379:6379"
 
 volumes:
   db_data_volume:
@@ -46,3 +65,7 @@ volumes:
     name: static_data
   media_volume:
     name: media_data
+  rabbit_volume:
+    name: rabbit_data
+  redis_volume:
+    name: redis_data
